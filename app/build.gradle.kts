@@ -16,6 +16,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 
@@ -30,17 +31,38 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
+            buildConfigField(
+                "STRING_FIELD_NAME",
+                "BASE_URL",
+                "https://testing.jasa-nikah-siri-amanah-profesional.com"
+            )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+
+        create("staging") {
+            buildConfigField(
+                "STRING_FIELD_NAME",
+                "BASE_URL",
+                "https://testing.jasa-nikah-siri-amanah-profesional.com"
+            )
+        }
+        create("production") {
+            buildConfigField(
+                "STRING_FIELD_NAME",
+                "BASE_URL",
+                "https://testing.jasa-nikah-siri-amanah-profesional.com"
+            )
+        }
     }
 
 
-    compileOptions {
+
+        compileOptions {
         /*    sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8*/
 
