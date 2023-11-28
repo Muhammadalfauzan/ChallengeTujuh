@@ -24,19 +24,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object SingletonModule {
 
-    private val interceptor: HttpLoggingInterceptor
-        get(){
-            val httpLoggingInterceptor = HttpLoggingInterceptor()
-
-            return httpLoggingInterceptor.apply {
-                httpLoggingInterceptor.level  = HttpLoggingInterceptor.Level.BODY
-            }
-        }
-
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(60L, TimeUnit.SECONDS)
-        .readTimeout(60L, TimeUnit.SECONDS)
-        .addInterceptor(interceptor).build()
 
     @Singleton
     @Provides
@@ -50,21 +37,36 @@ object SingletonModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
             .build()
     }
     @Singleton
     @Provides
-    fun provideMasterService(): ApiRestaurant =
-        Retrofit.Builder()
+    fun provideApiService(retrofit: Retrofit): ApiRestaurant {
+        return retrofit.create(ApiRestaurant::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideConverterFactory(): GsonConverterFactory {
+        return GsonConverterFactory.create()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRetrofitInstance(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit {
+        return Retrofit.Builder()
             .baseUrl("https://testing.jasa-nikah-siri-amanah-profesional.com/")
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(okHttpClient)
+            .addConverterFactory(gsonConverterFactory)
             .build()
-            .create(ApiRestaurant::class.java)
+    }
     @Singleton
     @Provides
     fun providePreferencesManager(application: Application): ViewPreference {

@@ -125,4 +125,6 @@ dependencies {
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+    androidTestImplementation ("com.google.dagger:hilt-android-testing:2.48.1")
+    testImplementation  ("com.google.dagger:hilt-android-testing:2.48.1")
 }
